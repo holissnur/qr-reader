@@ -28,7 +28,7 @@ jobs:
       run: |
         # Mengambil lokasi folder site-packages pyzbar untuk mendongkrak DLL-nya masuk ke .exe
         # --onefile untuk menggabungkan semuanya menjadi satu berkas .exe tunggal
-        pyinstaller --onedir --clean --contents-directory "internal" --noconsole --add-data "$pyzbar_path;pyzbar" screenshot_qr_reader.py
+        pyinstaller --onedir --clean --contents-directory "internal" --noconsole --collect-all pyzbar screenshot_qr_reader.py
 
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
