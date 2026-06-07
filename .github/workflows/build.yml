@@ -1,0 +1,37 @@
+name: Compile Python to EXE
+
+on:
+  push:
+    branches:
+      - main # Jalankan otomatis saat push ke branch main (sesuaikan jika nama branch Anda 'master')
+  workflow_dispatch: # Memungkinkan Anda menjalankan build secara manual dari web GitHub
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-index: '3.11' # Versi Python yang stabil untuk PyInstaller & pyzbar
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build EXE with PyInstaller
+      run: |
+        # Mengambil lokasi folder site-packages pyzbar untuk mendongkrak DLL-nya masuk ke .exe
+        # --onefile untuk menggabungkan semuanya menjadi satu berkas .exe tunggal
+        pyinstaller --onedir --clean --contents-directory "internal" --noconsole --add-data "$pyzbar_path;pyzbar" screenshot_qr_reader.py
+
+    - name: Upload EXE Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Screen-QR-Reader-EXE
+        path: dist/screenshot_qr_reader.exe
